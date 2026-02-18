@@ -14,9 +14,7 @@ import com.example.collegeschedule.utils.getWeekDateRange
 
 @Composable
 fun ScheduleScreen() {
-    var schedule by remember {
-        mutableStateOf<List<ScheduleByDateDto>>(emptyList())
-    }
+    var schedule by remember { mutableStateOf<List<ScheduleByDateDto>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -24,11 +22,10 @@ fun ScheduleScreen() {
         val (start, end) = getWeekDateRange()
         try {
             schedule = RetrofitInstance.api.getSchedule(
-                "ИС-12",
-                start,
-                end
+                groupName = "ИС-12",  // ← Здесь должно быть groupName, а не group!
+                start = start,
+                end = end
             )
-            loading = false
         } catch (e: Exception) {
             error = e.message
         } finally {
