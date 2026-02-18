@@ -1,17 +1,26 @@
 package com.example.collegeschedule.data.network
 
+import android.content.Context
 import com.example.collegeschedule.data.api.ScheduleApi
+import com.example.collegeschedule.data.local.FavoritesManager
+import com.example.collegeschedule.data.repository.ScheduleRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
+
+    private lateinit var context: Context
+
+    fun initialize(context: Context) {
+        this.context = context.applicationContext
+    }
+
     private val gson = GsonBuilder()
         .setLenient()
         .create()
@@ -29,6 +38,14 @@ object RetrofitInstance {
         .build()
 
     val api: ScheduleApi = retrofit.create(ScheduleApi::class.java)
+
+    val favoritesManager: FavoritesManager by lazy {
+        FavoritesManager(context)
+    }
+
+    val repository: ScheduleRepository by lazy {
+        ScheduleRepository(api, favoritesManager)
+    }
 
     private class AcceptJsonInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
